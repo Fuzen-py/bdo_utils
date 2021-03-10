@@ -1,15 +1,7 @@
-use serde::{Deserialize, Serialize};
+// NOTE:
+// Central marketplace doesn't update that often
+// Just set cache experation to 1h
 //mod official;
 mod unofficial;
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-pub enum Region {
-    NA,
-    EU,
-}
 
-impl Default for Region {
-    fn default() -> Self {
-        Region::NA
-    }
-}

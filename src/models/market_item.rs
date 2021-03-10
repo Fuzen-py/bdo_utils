@@ -17,6 +17,8 @@ pub struct MarketItem {
 
 impl MarketItem {
     /// If an item is ready to be updated
+    /// should at least an hour before 
+    /// a cache'd entry is expired.
     pub fn expired(&self) -> bool {
         self.updated <= Utc::now()
     }
