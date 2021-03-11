@@ -1,6 +1,6 @@
 mod db;
-mod marketplace;
-mod player_search;
 mod guild_search;
+mod marketplace;
 pub mod models;
+mod player_search;
 pub use player_search::{Player, PlayerSearch, PlayerToken};

@@ -6,5 +6,3 @@ pub struct Market<DB: DataManager> {
     region: Region,
     db: DB,
 }
-
-
