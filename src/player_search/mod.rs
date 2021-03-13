@@ -5,6 +5,7 @@ use crate::models::Region;
 use search_result::Profile;
 use serde::{Deserialize, Serialize};
 use url::Url;
+mod html_parse;
 
 #[derive(Debug, Clone, Copy)]
 pub struct PlayerSearch(Region);
@@ -62,11 +63,12 @@ impl PlayerSearch {
         };
         let resp = client.get(url).query(&query).send().await?;
         let body = resp.text().await?;
+        let _players = html_parse::prase_search_page(&body);
         Ok(())
     }
 
     /// Search for a player by character name
-    pub async fn search_character(self, name: String) {}
+    pub async fn search_character(self, _name: String) {}
 
     /// Search for a player by profile
     pub async fn get_profile(self, token: String) -> anyhow::Result<Option<Profile>> {

@@ -10,6 +10,7 @@
 
 mod class;
 mod item_category;
+pub mod lifeskill_level;
 mod market_item;
 mod player;
 mod region;
