@@ -7,7 +7,7 @@ use crate::{
     PlayerToken,
 };
 
-use super::search_result::{GuildCache, PlayerResult, Profile};
+use super::search_result::{Character, CharacterLifeskills, GuildCache, PlayerResult, Profile};
 
 pub(crate) fn prase_search_page(body: &str) -> Vec<PlayerResult> {
     let document = Html::parse_document(body);
@@ -93,11 +93,60 @@ fn parse_profile_page(body: &str, token: PlayerToken) -> Option<Profile> {
         }
     };
 
+    let characters = {
+        let char_sel = Selector::parse("ul.character_list > li").expect("Failed to get CSS Selector");
+        document.select(&char_sel).filter_map(parse_character).collect()
+    };
+
     Profile {
         guild: None,
-        crated: unimplemented!(),
-        characters: unimplemented!(),
+        created: unimplemented!(),
+        characters,
     };
 
     None
+}
+
+fn parse_character(elem: ElementRef) -> Option<Character> {
+    let name = {
+        let sel = Selector::parse("p.character_name").unwrap();
+        elem.select(&sel).next()?.text().next()?.trim().to_owned()
+    };
+    let class = {
+        let selector = Selector::parse( "p.character_info > span.character_symbol > em:nth-child(2)").unwrap();
+        elem.select(&selector).next()?.text().next()?.trim().to_owned()
+    };
+
+    let contribution = {
+        let selector = Selector::parse("p.character_info > span:nth-child(3) > em").unwrap();
+        let txt = elem.select(&selector).next()?.text().next()?.trim();
+        if txt.eq_ignore_ascii_case("private") {
+            None
+        } else {
+            Some(txt.parse().ok()?)
+        }
+    };
+
+    let level  ={
+        let selector = Selector::parse("p.character_info > span:nth-child(2) > em").unwrap();
+        let txt = elem.select(&selector).next()?.text().next()?.trim();
+        if txt.eq_ignore_ascii_case("private") {
+            None
+        } else {
+            Some(txt.parse().ok()?)
+        }
+    };
+
+
+
+    Some(Character {
+        name,
+        class,
+        contribution,
+        level,
+        lifeskills: unimplemented!(),
+        is_main: unimplemented!(),
+        
+
+    })
 }

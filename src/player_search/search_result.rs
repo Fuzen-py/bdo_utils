@@ -14,31 +14,31 @@ pub(crate) enum GuildCache {
 }
 
 pub struct CharacterLifeskills {
-    gathering: LifeSkillLevel,
-    fishing: LifeSkillLevel,
-    hunting: LifeSkillLevel,
-    cooking: LifeSkillLevel,
-    alchemy: LifeSkillLevel,
-    processing: LifeSkillLevel,
-    taming: LifeSkillLevel,
-    trading: LifeSkillLevel,
-    farming: LifeSkillLevel,
-    sailing: LifeSkillLevel,
-    bartering: LifeSkillLevel,
+    pub gathering: LifeSkillLevel,
+    pub fishing: LifeSkillLevel,
+    pub hunting: LifeSkillLevel,
+    pub cooking: LifeSkillLevel,
+    pub alchemy: LifeSkillLevel,
+    pub processing: LifeSkillLevel,
+    pub taming: LifeSkillLevel,
+    pub trading: LifeSkillLevel,
+    pub farming: LifeSkillLevel,
+    pub sailing: LifeSkillLevel,
+    pub bartering: LifeSkillLevel,
 }
 
 pub struct Character {
-    name: String,
-    class: String,
-    contribution: Option<u16>,
-    level: Option<u16>,
-    lifeskills: Option<CharacterLifeskills>,
-    is_main: bool,
+    pub name: String,
+    pub class: String,
+    pub contribution: Option<u16>,
+    pub level: Option<u16>,
+    pub lifeskills: Option<CharacterLifeskills>,
+    pub is_main: bool,
 }
 
 pub struct Profile {
     pub(crate) guild: Option<GuildCache>,
-    pub crated: Date<Utc>,
+    pub created: Date<Utc>,
     pub characters: Vec<Character>,
 }
 
