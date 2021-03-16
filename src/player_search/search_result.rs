@@ -1,18 +1,17 @@
-use chrono::{Date, Utc};
+use chrono::NaiveDate;
 
 use crate::{
-    guild_search::{Guild, GuildQuery, GuildToken},
+    guild_search::{Guild, GuildQuery},
     models::{lifeskill_level::LifeSkillLevel, Region},
+    PlayerSearch, PlayerToken,
 };
-pub struct AdventurerSearchResult {
-    players: Vec<()>,
-}
 
 pub(crate) enum GuildCache {
     Unprocessed(GuildQuery),
     Processed(Guild),
 }
 
+#[derive(Debug, Default, Clone, Copy)]
 pub struct CharacterLifeskills {
     pub gathering: LifeSkillLevel,
     pub fishing: LifeSkillLevel,
@@ -20,7 +19,7 @@ pub struct CharacterLifeskills {
     pub cooking: LifeSkillLevel,
     pub alchemy: LifeSkillLevel,
     pub processing: LifeSkillLevel,
-    pub taming: LifeSkillLevel,
+    pub training: LifeSkillLevel,
     pub trading: LifeSkillLevel,
     pub farming: LifeSkillLevel,
     pub sailing: LifeSkillLevel,
@@ -37,9 +36,33 @@ pub struct Character {
 }
 
 pub struct Profile {
+    pub name: String,
     pub(crate) guild: Option<GuildCache>,
-    pub created: Date<Utc>,
+    pub created: NaiveDate,
     pub characters: Vec<Character>,
+    pub token: PlayerToken,
+    pub region: Region,
+}
+
+impl Profile {
+    /// Get a mutable reference to the profile's guild.
+    pub fn guild_mut(&mut self) -> Option<&mut Guild> {
+        if let Some(ref mut gcache) = self.guild {
+            match gcache {
+                GuildCache::Processed(g) => Some(g),
+                GuildCache::Unprocessed(ref _query) => unimplemented!(),
+            }
+        } else {
+            None
+        }
+    }
+    pub async fn update(&mut self) -> anyhow::Result<()> {
+        let token = self.token.0.clone();
+        if let Some(profile) = PlayerSearch::init(self.region).get_profile(token).await? {
+            *self = profile;
+        }
+        Ok(())
+    }
 }
 
 pub struct PlayerResult {
