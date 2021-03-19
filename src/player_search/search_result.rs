@@ -76,6 +76,8 @@ pub struct PlayerResult {
     pub level: Option<u16>,
     /// Selected Main's class
     pub class: String,
+    /// Main character's name
+    pub main_name: String,
     /// Players Guild, may be private
     pub guild: Option<GuildQuery>,
 }

@@ -32,7 +32,13 @@ fn parse_adventurer_li(elem: ElementRef) -> Option<PlayerResult> {
     let guild_sel = Selector::parse("div.state > a").ok()?;
     let region = elem.select(&region_sel).next()?.text().next()?;
     let main_level = elem.select(&main_level_sel).next()?.text().next()?;
-    let main_charname = elem.select(&main_charname_sel).next()?.text().next()?;
+    let main_charname = elem
+        .select(&main_charname_sel)
+        .next()?
+        .text()
+        .next()?
+        .trim()
+        .to_owned();
     let main_class = elem
         .select(&main_class_sel)
         .next()?
@@ -40,7 +46,7 @@ fn parse_adventurer_li(elem: ElementRef) -> Option<PlayerResult> {
         .next()?
         .trim()
         .to_owned();
-    let guild_elem = elem.select(&guild_sel).next()?;
+    let guild_elem = elem.select(&guild_sel).next();
     let family_elem = elem.select(&family_name_sel).next()?;
     let family = family_elem.text().next().map(|s| s.trim())?.to_owned();
     let token = family_elem.value().attr("href")?.trim().to_owned();
@@ -58,14 +64,34 @@ fn parse_adventurer_li(elem: ElementRef) -> Option<PlayerResult> {
         }
     };
 
+    let guild = if let Some(guild_elm) = guild_elem {
+        match guild_elm.text().next().map(|n| n.trim().to_owned()) {
+            Some(name) => {
+                /* Currently doesnt work
+                let val = guild_elm.value();
+                if let Some(href) = val.attr("href") {
+                    let url = ::url::Url::parse(href).expect("Expected a proper URL");
+
+
+                }
+                */
+                Some(GuildQuery { name, token: None })
+            }
+            None => None,
+        }
+    } else {
+        None
+    };
+
     let player = PlayerResult {
         level,
         region,
         family,
         token: super::PlayerToken(token),
         class: main_class,
+        main_name: main_charname,
         // TODO: Parse Guild
-        guild: None,
+        guild,
     };
 
     Some(player)
@@ -96,7 +122,7 @@ pub(crate) fn parse_profile_page(
             let token = guild_elm.value().attr("href")?.to_owned();
             let query = GuildQuery {
                 name,
-                token: GuildToken(token),
+                token: Some(GuildToken(token)),
             };
             Some(GuildCache::Unprocessed(query))
         }

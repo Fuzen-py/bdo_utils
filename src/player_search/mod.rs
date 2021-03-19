@@ -1,12 +1,9 @@
-mod player;
-pub use player::Player;
 mod search_result;
 use crate::models::Region;
-use search_result::Profile;
 use serde::{Deserialize, Serialize};
 use url::Url;
 
-use self::search_result::PlayerResult;
+pub use self::search_result::{PlayerResult, Profile as PlayerProfile};
 mod html_parse;
 
 #[derive(Debug, Clone, Copy)]
@@ -67,17 +64,17 @@ impl PlayerSearch {
     }
 
     /// Search for a player by family name
-    pub async fn search_family(self, name: String) -> anyhow::Result<Vec<PlayerResult>> {
+    pub async fn by_family(self, name: String) -> anyhow::Result<Vec<PlayerResult>> {
         self.search(name, SearchType::Family).await
     }
 
     /// Search for a player by character name
-    pub async fn search_character(self, name: String) -> anyhow::Result<Vec<PlayerResult>> {
+    pub async fn by_character(self, name: String) -> anyhow::Result<Vec<PlayerResult>> {
         self.search(name, SearchType::Character).await
     }
 
     /// Search for a player by profile
-    pub async fn get_profile(self, token: String) -> anyhow::Result<Option<Profile>> {
+    pub async fn get_profile(self, token: String) -> anyhow::Result<Option<PlayerProfile>> {
         let profile_page = reqwest::Client::new()
             .get(get_url(self.0))
             .query(&ProfileTarget {
