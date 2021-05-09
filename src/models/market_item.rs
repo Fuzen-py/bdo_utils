@@ -4,15 +4,15 @@ use serde::{Deserialize, Serialize};
 use super::ItemCategory;
 #[derive(Serialize, Deserialize, Clone, Debug, Eq, PartialEq, Hash)]
 pub struct MarketItem {
-    id: u64,
-    name: String,
-    category: ItemCategory,
-    enhancement: u16,
-    grade: u8,
-    price: u64,
-    trades: u64,
-    stock: u64,
-    updated: DateTime<Utc>,
+    pub id: u64,
+    pub name: String,
+    pub category: ItemCategory,
+    pub enhancement: u16,
+    pub grade: u8,
+    pub price: u64,
+    pub trades: u64,
+    pub stock: u64,
+    pub updated: DateTime<Utc>,
 }
 
 impl MarketItem {

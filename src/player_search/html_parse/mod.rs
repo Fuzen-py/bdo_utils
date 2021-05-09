@@ -65,20 +65,11 @@ fn parse_adventurer_li(elem: ElementRef) -> Option<PlayerResult> {
     };
 
     let guild = if let Some(guild_elm) = guild_elem {
-        match guild_elm.text().next().map(|n| n.trim().to_owned()) {
-            Some(name) => {
-                /* Currently doesnt work
-                let val = guild_elm.value();
-                if let Some(href) = val.attr("href") {
-                    let url = ::url::Url::parse(href).expect("Expected a proper URL");
-
-
-                }
-                */
-                Some(GuildQuery { name, token: None })
-            }
-            None => None,
-        }
+        guild_elm
+            .text()
+            .next()
+            .map(|n| n.trim().to_owned())
+            .map(|name| GuildQuery { name, token: None })
     } else {
         None
     };
@@ -92,6 +83,8 @@ fn parse_adventurer_li(elem: ElementRef) -> Option<PlayerResult> {
         main_name: main_charname,
         // TODO: Parse Guild
         guild,
+        // TODO: Parse Contribution
+        contribution: None,
     };
 
     Some(player)

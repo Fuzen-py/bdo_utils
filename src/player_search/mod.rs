@@ -7,11 +7,18 @@ pub use self::search_result::{PlayerResult, Profile as PlayerProfile};
 mod html_parse;
 
 #[derive(Debug, Clone, Copy)]
-pub struct PlayerSearch(Region);
+pub struct PlayerSearch(pub(crate) Region);
 impl From<Region> for PlayerSearch {
     fn from(region: Region) -> Self {
         Self(region)
     }
+}
+
+pub mod consts {
+    use crate::{PlayerSearch, models::Region};    
+    pub const NA_PLAYER_SEARCH: PlayerSearch = PlayerSearch(Region::NA);
+
+    pub const EU_PLAYER_SEARCH: PlayerSearch = PlayerSearch(Region::EU);
 }
 
 #[derive(Serialize, Deserialize)]
@@ -40,6 +47,12 @@ pub struct PlayerToken(String);
 impl From<String> for PlayerToken {
     fn from(token: String) -> Self {
         PlayerToken(token)
+    }
+}
+
+impl<'t> From<&'t str> for PlayerToken {
+    fn from(token: &'t str) -> Self {
+        PlayerToken(token.to_owned())
     }
 }
 
@@ -74,11 +87,11 @@ impl PlayerSearch {
     }
 
     /// Search for a player by profile
-    pub async fn get_profile(self, token: String) -> anyhow::Result<Option<PlayerProfile>> {
+    pub async fn get_profile(self, token: &str) -> anyhow::Result<Option<PlayerProfile>> {
         let profile_page = reqwest::Client::new()
             .get(get_url(self.0))
             .query(&ProfileTarget {
-                profile_target: token.clone(),
+                profile_target: token.to_owned(),
             })
             .send()
             .await?
