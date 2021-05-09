@@ -1,5 +1,3 @@
-
-
 use crate::models::Region;
 use crate::player_search::{PlayerProfile, PlayerResult};
 use serde::{Deserialize, Serialize};

@@ -15,7 +15,7 @@ impl From<Region> for PlayerSearch {
 }
 
 pub mod consts {
-    use crate::{PlayerSearch, models::Region};    
+    use crate::{models::Region, PlayerSearch};
     pub const NA_PLAYER_SEARCH: PlayerSearch = PlayerSearch(Region::NA);
 
     pub const EU_PLAYER_SEARCH: PlayerSearch = PlayerSearch(Region::EU);

@@ -14,4 +14,3 @@ pub trait DataManager {
     /// Retrieve a cache'd item
     async fn fetch_market_item(&self, id: u64) -> Option<MarketItem>;
 }
-
