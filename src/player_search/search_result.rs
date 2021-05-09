@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 
 use crate::{
-    guild_search::{Guild, GuildQuery},
+    guild_search::{self, Guild, GuildQuery, GuildSearch},
     models::{lifeskill_level::LifeSkillLevel, Region},
     PlayerSearch, PlayerToken,
 };
@@ -46,12 +46,29 @@ pub struct Profile {
 
 impl Profile {
     /// Get a mutable reference to the profile's guild.
-    pub fn guild_mut(&mut self) -> Option<&mut Guild> {
+    pub async fn guild_mut(&mut self) -> Option<&mut Guild> {
         if let Some(ref mut gcache) = self.guild {
             match gcache {
                 GuildCache::Processed(g) => Some(g),
                 // TODO: Make an attempt to process this
                 GuildCache::Unprocessed(ref _query) => unimplemented!(),
+                GuildCache::Unprocessed(ref query) => {
+                    let guild_search = GuildSearch(self.region);
+                    if let Some(ref token) = query.token {
+                        let guild = guild_search.get(&token.0).await.ok()??;
+                        *gcache = GuildCache::Processed(guild);
+                    } else if let Ok(Some(g)) = guild_search::GuildSearch(self.region)
+                        .by_name(&query.name)
+                        .await
+                    {
+                        *gcache = GuildCache::Processed(g);
+                    }
+                    if let GuildCache::Processed(ref mut g) = gcache {
+                        Some(g)
+                    } else {
+                        None
+                    }
+                }
             }
         } else {
             None
@@ -101,9 +118,14 @@ impl PlayerResult {
             .get_profile(&self.token.0)
             .await
     }
-    pub async fn guild(&self) -> anyhow::Result<Option<GuildQuery>> {
+    pub async fn guild(&self) -> anyhow::Result<Option<Guild>> {
         if let Some(ref _guild) = self.guild {
-            todo!()
+            let search = GuildSearch(self.region);
+            if let Some(ref token) = _guild.token {
+                search.get(&token.0).await
+            } else {
+                search.by_name(&_guild.name).await
+            }
         } else {
             Ok(None)
         }

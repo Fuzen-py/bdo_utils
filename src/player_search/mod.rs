@@ -1,7 +1,7 @@
 mod search_result;
 use crate::models::Region;
 use serde::{Deserialize, Serialize};
-use url::Url;
+//use ::url::Url;
 
 pub use self::search_result::{PlayerResult, Profile as PlayerProfile};
 mod html_parse;
@@ -64,7 +64,7 @@ impl PlayerSearch {
     async fn search(self, name: String, stype: SearchType) -> anyhow::Result<Vec<PlayerResult>> {
         // https://www.naeu.playblackdesert.com/en-US/Adventure?region={region}&searchType=2&searchKeyword={name}
         let client = reqwest::Client::new();
-        let url = Url::parse(self.0.official_site())?.join("Adventure")?;
+        let url = ::url::Url::parse(self.0.official_site())?.join("Adventure")?;
         let query = SearchQuery {
             region: self.0,
             search_type: stype,

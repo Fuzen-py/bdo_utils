@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum Region {
     NA,
