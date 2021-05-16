@@ -1,8 +1,5 @@
-use std::sync::Arc;
-
 use crate::models::MarketItem;
 use async_trait::async_trait;
-use tokio::sync::RwLock;
 
 /// Trait to handle data management
 #[async_trait]
