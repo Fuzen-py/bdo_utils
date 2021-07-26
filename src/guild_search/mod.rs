@@ -12,9 +12,15 @@ struct ByName {
     search_text: String,
 }
 
+pub enum GuildState {
+    Public(GuildToken),
+    Guildless,
+    Private,
+}
+
 pub struct GuildQuery {
     pub name: String,
-    pub token: Option<GuildToken>,
+    pub token: GuildState,
 }
 
 pub enum PlayerCache {

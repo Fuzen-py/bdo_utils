@@ -1,7 +1,7 @@
 use scraper::{ElementRef, Html, Selector};
 
 use crate::{
-    guild_search::{GuildQuery, GuildToken},
+    guild_search::{GuildQuery, GuildState, GuildToken},
     models::{
         lifeskill_level::{Grade, Level, LifeSkillLevel},
         Region,
@@ -69,7 +69,10 @@ fn parse_adventurer_li(elem: ElementRef) -> Option<PlayerResult> {
             .text()
             .next()
             .map(|n| n.trim().to_owned())
-            .map(|name| GuildQuery { name, token: None })
+            .map(|name| GuildQuery {
+                name,
+                token: GuildState::Private,
+            })
     } else {
         None
     };
@@ -115,7 +118,7 @@ pub(crate) fn parse_profile_page(
             let token = guild_elm.value().attr("href")?.to_owned();
             let query = GuildQuery {
                 name,
-                token: Some(GuildToken(token)),
+                token: GuildState::Public(GuildToken(token)),
             };
             Some(GuildCache::Unprocessed(query))
         }

@@ -9,6 +9,7 @@
 // TODO: Marketplace Cache
 
 mod class;
+mod grade;
 mod item_category;
 pub mod lifeskill_level;
 mod market_item;

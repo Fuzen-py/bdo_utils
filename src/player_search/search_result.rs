@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 
 use crate::{
-    guild_search::{self, Guild, GuildQuery, GuildSearch},
+    guild_search::{self, Guild, GuildQuery, GuildSearch, GuildState},
     models::{lifeskill_level::LifeSkillLevel, Region},
     PlayerSearch, PlayerToken,
 };
@@ -51,10 +51,9 @@ impl Profile {
             match gcache {
                 GuildCache::Processed(g) => Some(g),
                 // TODO: Make an attempt to process this
-                GuildCache::Unprocessed(ref _query) => unimplemented!(),
                 GuildCache::Unprocessed(ref query) => {
                     let guild_search = GuildSearch(self.region);
-                    if let Some(ref token) = query.token {
+                    if let GuildState::Public(ref token) = query.token {
                         let guild = guild_search.get(&token.0).await.ok()??;
                         *gcache = GuildCache::Processed(guild);
                     } else if let Ok(Some(g)) = guild_search::GuildSearch(self.region)
@@ -121,7 +120,7 @@ impl PlayerResult {
     pub async fn guild(&self) -> anyhow::Result<Option<Guild>> {
         if let Some(ref _guild) = self.guild {
             let search = GuildSearch(self.region);
-            if let Some(ref token) = _guild.token {
+            if let GuildState::Public(ref token) = _guild.token {
                 search.get(&token.0).await
             } else {
                 search.by_name(&_guild.name).await
