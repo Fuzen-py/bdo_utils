@@ -1,15 +1,15 @@
 [package]
-name = "bdo_utils"
+name = "bdo_utility"
 version = "0.1.0"
-authors = ["Fuzen <me@fuzen.cafe>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-tokio = "1"
-serde = {version = "1", features = ["derive"] }
+serde = {Version = "1", features = ["derive"]}
 reqwest = { version = "0.11", features = ["json"] }
-chrono = {version = "0.4", features = ["serde"] }
-async-trait = "0.1"
-uuid = {version = "0.8", features = ["serde"]}
+
+
+[lib]
+name = "bdo_utility"
+path = "lib.rs"
